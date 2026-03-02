@@ -13,7 +13,7 @@ export function Footer() {
           <div className="flex flex-col gap-4">
             <Link href="/" className="flex items-center gap-3">
               <Image
-                src="/images/logo.jpg"
+                src="/images/logo.jpeg"
                 alt="MUS!C Travels and Holidays"
                 width={64}
                 height={64}

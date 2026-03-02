@@ -30,7 +30,7 @@ export function Navbar() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3">
           <Image
-            src="/images/logo.jpg"
+            src="/images/logo.jpeg"
             alt="MUS!C Travels and Holidays logo"
             width={72}
             height={72}
