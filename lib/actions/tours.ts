@@ -5,6 +5,13 @@ import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 import { z } from "zod"
 
+// Helper: only accept URLs that start with http(s):// or /
+function isValidImageUrl(url: unknown): url is string {
+    if (typeof url !== 'string' || url.trim() === '') return false
+    const trimmed = url.trim()
+    return trimmed.startsWith('http://') || trimmed.startsWith('https://') || trimmed.startsWith('/')
+}
+
 // Updated Schema - images is now handled separately or as optional string array for validation
 // We'll trust the server logic to build the array
 const TourSchema = z.object({
@@ -108,9 +115,14 @@ export async function createTour(prevState: any, formData: FormData) {
 
     const { duration_days, duration_nights, max_group_size, includes, ...rest } = validatedFields.data
 
+    // Only store validated image URLs — filter out any invalid/placeholder values
+    const sanitizedImages = uploadedImageUrls.filter(isValidImageUrl)
+    const coverImage = sanitizedImages[0] ?? null
+
     const { error } = await supabase.from("tours").insert({
         ...rest,
-        images: uploadedImageUrls,
+        images: sanitizedImages,
+        cover_image: coverImage,
         duration: durationString,
         group_size: `${max_group_size} People`,
         inclusions: includes,
@@ -165,15 +177,16 @@ export async function updateTour(id: string, prevState: any, formData: FormData)
     }
 
     // Handle Images
-    // 1. Get existing images (which were hidden inputs)
-    const existingImages = formData.getAll("existing_images") as string[]
+    // 1. Get existing images (which were hidden inputs) — validate each one
+    const existingImages = (formData.getAll("existing_images") as string[]).filter(isValidImageUrl)
 
     // 2. Upload new images
     const newFiles = formData.getAll("images") as File[]
-    const newImageUrls = await uploadImages(newFiles)
+    const newImageUrls = (await uploadImages(newFiles)).filter(isValidImageUrl)
 
-    // 3. Combine
+    // 3. Combine, keeping only valid URLs
     const finalImages = [...existingImages, ...newImageUrls]
+    const finalCoverImage = finalImages[0] ?? null
 
     const durationString = `${validatedFields.data.duration_days} Days / ${validatedFields.data.duration_nights} Nights`
 
@@ -184,6 +197,7 @@ export async function updateTour(id: string, prevState: any, formData: FormData)
         .update({
             ...rest,
             images: finalImages,
+            cover_image: finalCoverImage,
             duration: durationString,
             group_size: `${max_group_size} People`,
             inclusions: includes,

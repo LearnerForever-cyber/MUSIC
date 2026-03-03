@@ -1,7 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   typescript: {
-    ignoreBuildErrors: true,
+    // Removed ignoreBuildErrors: true — we want to catch real TypeScript errors
+    ignoreBuildErrors: false,
   },
   images: {
     qualities: [70, 75, 80, 85, 90],
