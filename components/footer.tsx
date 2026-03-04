@@ -21,9 +21,9 @@ export function Footer() {
               />
               <div className="flex flex-col">
                 <span className="font-heading text-xl font-bold text-sand">
-                  MUS!C Travels
+                  MUS!C
                 </span>
-                <span className="text-sm text-sand/70">& Holidays</span>
+                <span className="text-sm text-sand/70">Travels & Holidays</span>
               </div>
             </Link>
             <p className="text-sm leading-relaxed text-sand/70">
@@ -63,7 +63,7 @@ export function Footer() {
               Popular Destinations
             </h3>
             <ul className="flex flex-col gap-3">
-              {["Bali, Indonesia", "Paris, France", "Maldives", "Dubai, UAE", "Swiss Alps"].map(
+              {["Goa", "Bali", "Maldives", "Dubai", "Thailand"].map(
                 (dest) => (
                   <li key={dest}>
                     <Link
@@ -84,14 +84,6 @@ export function Footer() {
               Get in Touch
             </h3>
             <ul className="flex flex-col gap-4">
-              <li className="flex items-start gap-3">
-                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-sunset" />
-                <span className="text-sm text-sand/70">
-                  Travel House, Music Lane,
-                  <br />
-                  Adventure City
-                </span>
-              </li>
               {whatsappNumber && (
                 <li className="flex items-center gap-3">
                   <Phone className="h-4 w-4 shrink-0 text-sunset" />

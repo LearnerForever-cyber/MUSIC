@@ -19,7 +19,7 @@ export default async function AdminToursPage() {
 
     const { data: tours, error } = await supabase
         .from("tours")
-        .select("*")
+        .select("id, title, category, price, duration, is_active, created_at")
         .order("created_at", { ascending: false })
 
     if (error) {
@@ -71,7 +71,7 @@ export default async function AdminToursPage() {
                                     <TableCell>
                                         <Badge variant="outline">{tour.category}</Badge>
                                     </TableCell>
-                                    <TableCell>${tour.price.toLocaleString()}</TableCell>
+                                    <TableCell>₹{tour.price?.toLocaleString() ?? "0"}</TableCell>
                                     <TableCell>{tour.duration}</TableCell>
                                     <TableCell>
                                         {tour.is_active ? (

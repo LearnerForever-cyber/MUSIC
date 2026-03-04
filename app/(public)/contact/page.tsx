@@ -9,11 +9,11 @@ export const metadata: Metadata = {
 }
 
 const contactDetails = [
-  {
-    icon: MapPin,
-    title: "Visit Us",
-    lines: ["Travel House, Music Lane", "Adventure City"],
-  },
+  // {
+  //   icon: MapPin,
+  //   title: "Visit Us",
+  //   lines: ["Travel House, Music Lane", "Adventure City"],
+  // },
   {
     icon: Phone,
     title: "Call Us",
@@ -22,7 +22,7 @@ const contactDetails = [
   {
     icon: Mail,
     title: "Email Us",
-    lines: ["info@musictravels.com", "bookings@musictravels.com"],
+    lines: ["musictravelsholidays1029@gmail.com"],
   },
   {
     icon: Clock,

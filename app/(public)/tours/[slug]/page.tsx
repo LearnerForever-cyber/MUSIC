@@ -8,6 +8,8 @@ interface Props {
   params: Promise<{ slug: string }>
 }
 
+export const revalidate = 3600 // Edge cached for 1 hour
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
   const supabase = await createClient()

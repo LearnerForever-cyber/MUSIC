@@ -9,7 +9,7 @@ export async function FeaturedTours() {
   const supabase = await createClient()
   const { data: tours } = await supabase
     .from("tours")
-    .select("*")
+    .select("id, title, slug, cover_image, images, destination, category, is_featured, short_description, price, duration")
     .eq("is_featured", true)
     .eq("is_active", true)
     .order("created_at", { ascending: false })

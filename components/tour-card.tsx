@@ -31,7 +31,7 @@ export function TourCard({ tour }: { tour: Tour }) {
     <Link href={`/tours/${tour.slug}`} className="flex h-full">
       <PlaceCard
         images={images}
-        tags={[tour.destination, tour.category]}
+        tags={[tour.destination, tour.category].filter(Boolean)}
         rating={4.8}
         title={tour.title}
         dateRange={tour.duration}

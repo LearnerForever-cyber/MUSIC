@@ -24,7 +24,7 @@ export default async function ToursPage({
 
   let query = supabase
     .from("tours")
-    .select("*", { count: 'exact' })
+    .select("id, title, slug, cover_image, images, destination, category, is_featured, short_description, price, duration", { count: 'exact' })
     .eq("is_active", true)
     .order("is_featured", { ascending: false })
     .order("created_at", { ascending: false })
@@ -42,12 +42,23 @@ export default async function ToursPage({
     )
   }
 
-  const { data: tours, count } = await query
-  const allTours = (tours || []) as Tour[]
+  // Parallelize requests to eliminate waterfall
+  const [
+    { data: tours, count },
+    { data: allActiveTours }
+  ] = await Promise.all([
+    query,
+    supabase
+      .from("tours")
+      .select("category, destination")
+      .eq("is_active", true)
+  ]);
 
-  // Optimize: Fetch facets efficiently (ideally these should be cached)
-  const categories = ["Adventure", "Beach", "Cultural", "Luxury", "Nature", "City Break"]
-  const destinations = ["Bali", "Paris", "Maldives", "Dubai", "Swiss Alps", "Jordan"]
+  const allTours = (tours || []) as Tour[]
+  const activeToursList = allActiveTours || []
+
+  const categories = Array.from(new Set(activeToursList.map(t => t.category).filter(Boolean))).sort()
+  const destinations = Array.from(new Set(activeToursList.map(t => t.destination).filter(Boolean))).sort()
 
   return (
     <>

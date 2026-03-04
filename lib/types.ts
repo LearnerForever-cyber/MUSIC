@@ -6,7 +6,7 @@ export interface Tour {
   short_description: string
   destination: string
   category: string
-  price: number
+  price: number | null
   original_price: number | null
   duration: string
   group_size: string

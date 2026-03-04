@@ -110,18 +110,24 @@ export function TourDetailContent({ tour }: { tour: Tour }) {
             {tour.title}
           </h1>
           <div className="mt-3 flex flex-wrap items-center gap-4 text-sand/80">
-            <span className="flex items-center gap-1.5">
-              <MapPin className="h-4 w-4 text-sunset" />
-              {tour.destination}
-            </span>
-            <span className="flex items-center gap-1.5">
-              <Clock className="h-4 w-4" />
-              {tour.duration}
-            </span>
-            <span className="flex items-center gap-1.5">
-              <Users className="h-4 w-4" />
-              {tour.group_size}
-            </span>
+            {tour.destination && (
+              <span className="flex items-center gap-1.5">
+                <MapPin className="h-4 w-4 text-sunset" />
+                {tour.destination}
+              </span>
+            )}
+            {tour.duration && (
+              <span className="flex items-center gap-1.5">
+                <Clock className="h-4 w-4" />
+                {tour.duration}
+              </span>
+            )}
+            {tour.group_size && (
+              <span className="flex items-center gap-1.5">
+                <Users className="h-4 w-4" />
+                {tour.group_size}
+              </span>
+            )}
             <span className="flex items-center gap-1.5">
               <Star className="h-4 w-4 fill-gold text-gold" />
               4.8 Rating
@@ -229,56 +235,64 @@ export function TourDetailContent({ tour }: { tour: Tour }) {
             </div>
 
             {/* Sidebar */}
-            <div className="space-y-6">
+            <div className="space-y-6 lg:sticky lg:top-24 lg:h-fit max-h-[calc(100vh-6rem)] overflow-y-auto pb-4">
               {/* Price Card */}
-              <div className="sticky top-24 rounded-xl border border-border bg-card p-6 shadow-sm">
-                <div className="mb-4">
-                  {tour.original_price && (
-                    <span className="text-sm text-muted-foreground line-through">
-                      ${tour.original_price.toLocaleString()}
-                    </span>
-                  )}
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-3xl font-bold text-primary">
-                      ${tour.price.toLocaleString()}
-                    </span>
-                    <span className="text-sm text-muted-foreground">/ person</span>
+              <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
+                {(tour.price !== null && tour.price !== undefined && tour.price !== 0) && (
+                  <div className="mb-4">
+                    {tour.original_price && (
+                      <span className="text-sm text-muted-foreground line-through">
+                        ₹{tour.original_price.toLocaleString()}
+                      </span>
+                    )}
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-3xl font-bold text-primary">
+                        ₹{tour.price.toLocaleString()}
+                      </span>
+                      <span className="text-sm text-muted-foreground">/ person</span>
+                    </div>
+                    {tour.original_price && (
+                      <Badge className="mt-2 bg-destructive/10 text-destructive border-none">
+                        Save ₹
+                        {(tour.original_price - tour.price).toLocaleString()}
+                      </Badge>
+                    )}
                   </div>
-                  {tour.original_price && (
-                    <Badge className="mt-2 bg-destructive/10 text-destructive border-none">
-                      Save $
-                      {(tour.original_price - tour.price).toLocaleString()}
-                    </Badge>
-                  )}
-                </div>
+                )}
 
                 <Separator className="my-4" />
 
                 <div className="space-y-3 text-sm">
-                  <div className="flex items-center justify-between">
-                    <span className="flex items-center gap-2 text-muted-foreground">
-                      <Calendar className="h-4 w-4" /> Duration
-                    </span>
-                    <span className="font-medium text-foreground">
-                      {tour.duration}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="flex items-center gap-2 text-muted-foreground">
-                      <Users className="h-4 w-4" /> Group Size
-                    </span>
-                    <span className="font-medium text-foreground">
-                      {tour.group_size}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="flex items-center gap-2 text-muted-foreground">
-                      <MapPin className="h-4 w-4" /> Destination
-                    </span>
-                    <span className="font-medium text-foreground">
-                      {tour.destination}
-                    </span>
-                  </div>
+                  {tour.duration && (
+                    <div className="flex items-center justify-between">
+                      <span className="flex items-center gap-2 text-muted-foreground">
+                        <Calendar className="h-4 w-4" /> Duration
+                      </span>
+                      <span className="font-medium text-foreground">
+                        {tour.duration}
+                      </span>
+                    </div>
+                  )}
+                  {tour.group_size && (
+                    <div className="flex items-center justify-between">
+                      <span className="flex items-center gap-2 text-muted-foreground">
+                        <Users className="h-4 w-4" /> Group Size
+                      </span>
+                      <span className="font-medium text-foreground">
+                        {tour.group_size}
+                      </span>
+                    </div>
+                  )}
+                  {tour.destination && (
+                    <div className="flex items-center justify-between">
+                      <span className="flex items-center gap-2 text-muted-foreground">
+                        <MapPin className="h-4 w-4" /> Destination
+                      </span>
+                      <span className="font-medium text-foreground">
+                        {tour.destination}
+                      </span>
+                    </div>
+                  )}
                 </div>
 
                 <Separator className="my-4" />

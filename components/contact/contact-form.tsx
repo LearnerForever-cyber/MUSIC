@@ -34,6 +34,7 @@ export function ContactForm({
       phone: formData.get("phone") as string,
       message: formData.get("message") as string,
       tour_id: null,
+      tourInterest: tourInterest || null,
     }
 
     try {

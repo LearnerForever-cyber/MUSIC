@@ -15,20 +15,19 @@ function isValidImageUrl(url: unknown): url is string {
 // Updated Schema - images is now handled separately or as optional string array for validation
 // We'll trust the server logic to build the array
 const TourSchema = z.object({
-    title: z.string().min(1, "Title is required"),
-    slug: z.string().min(1, "Slug is required"),
-    description: z.string().min(1, "Description is required"),
-    short_description: z.string().min(1, "Short description is required"),
-    destination: z.string().min(1, "Destination is required"),
-    category: z.string().min(1, "Category is required"),
-    price: z.coerce.number().min(0, "Price must be positive"),
+    title: z.string().optional(),
+    slug: z.string().optional(),
+    description: z.string().optional(),
+    short_description: z.string().optional(),
+    destination: z.string().optional(),
+    category: z.string().optional(),
+    price: z.coerce.number().optional().nullable(),
     original_price: z.coerce.number().optional().nullable(),
-    duration_days: z.coerce.number().min(1, "Duration (days) must be at least 1"),
-    duration_nights: z.coerce.number().min(0, "Duration (nights) must be at least 0"),
-    max_group_size: z.coerce.number().min(1, "Group size must be at least 1"),
-    highlights: z.string().transform((val) => val.split("\n").filter((s) => s.trim() !== "")),
-    includes: z.string().transform((val) => val.split("\n").filter((s) => s.trim() !== "")),
-    // images: z.array(z.string()).optional(), // Handled manually
+    duration_days: z.coerce.number().optional(),
+    duration_nights: z.coerce.number().optional(),
+    max_group_size: z.coerce.number().optional(),
+    highlights: z.string().optional().transform((val) => val ? val.split("\n").filter((s) => s.trim() !== "") : []),
+    includes: z.string().optional().transform((val) => val ? val.split("\n").filter((s) => s.trim() !== "") : []),
     is_featured: z.coerce.boolean(),
     is_active: z.coerce.boolean(),
 })
@@ -110,21 +109,32 @@ export async function createTour(prevState: any, formData: FormData) {
     const imageFiles = formData.getAll("images") as File[]
     const uploadedImageUrls = await uploadImages(imageFiles)
 
-    // Construct the duration string e.g. "5 Days / 4 Nights"
-    const durationString = `${validatedFields.data.duration_days} Days / ${validatedFields.data.duration_nights} Nights`
-
-    const { duration_days, duration_nights, max_group_size, includes, ...rest } = validatedFields.data
+    const { duration_days, duration_nights, max_group_size, includes, slug, ...rawRest } = validatedFields.data
 
     // Only store validated image URLs — filter out any invalid/placeholder values
     const sanitizedImages = uploadedImageUrls.filter(isValidImageUrl)
     const coverImage = sanitizedImages[0] ?? null
 
+    const finalSlug = slug || (rawRest.title ? rawRest.title.toLowerCase().replace(/[^a-z0-9\s]+/g, '').replace(/\s+/g, '-') + '-' + Date.now() : 'tour-' + Date.now())
+
+
+
     const { error } = await supabase.from("tours").insert({
-        ...rest,
+        title: rawRest.title || "",
+        description: rawRest.description || "",
+        short_description: rawRest.short_description || "",
+        destination: rawRest.destination || "",
+        category: rawRest.category || "",
+        price: rawRest.price || 0,
+        original_price: rawRest.original_price,
+        highlights: rawRest.highlights,
+        is_featured: rawRest.is_featured,
+        is_active: rawRest.is_active,
+        slug: finalSlug,
         images: sanitizedImages,
         cover_image: coverImage,
-        duration: durationString,
-        group_size: `${max_group_size} People`,
+        duration: (duration_days || duration_nights) ? `${duration_days || 0} Days / ${duration_nights || 0} Nights` : "",
+        group_size: max_group_size ? `${max_group_size} People` : "",
         inclusions: includes,
         itinerary: [],
     })
@@ -133,8 +143,7 @@ export async function createTour(prevState: any, formData: FormData) {
         return { message: `Database Error: ${error.message}` }
     }
 
-    revalidatePath("/tours")
-    revalidatePath("/admin/tours")
+    revalidatePath("/", "layout")
     redirect("/admin/tours")
 }
 
@@ -188,18 +197,30 @@ export async function updateTour(id: string, prevState: any, formData: FormData)
     const finalImages = [...existingImages, ...newImageUrls]
     const finalCoverImage = finalImages[0] ?? null
 
-    const durationString = `${validatedFields.data.duration_days} Days / ${validatedFields.data.duration_nights} Nights`
+    const { duration_days, duration_nights, max_group_size, includes, slug, ...rawRest } = validatedFields.data
 
-    const { duration_days, duration_nights, max_group_size, includes, ...rest } = validatedFields.data
+
+
+    const finalSlug = slug || (rawRest.title ? rawRest.title.toLowerCase().replace(/[^a-z0-9\s]+/g, '').replace(/\s+/g, '-') + '-' + Date.now() : 'tour-' + Date.now())
 
     const { error } = await supabase
         .from("tours")
         .update({
-            ...rest,
+            title: rawRest.title || "",
+            description: rawRest.description || "",
+            short_description: rawRest.short_description || "",
+            destination: rawRest.destination || "",
+            category: rawRest.category || "",
+            price: rawRest.price || 0,
+            original_price: rawRest.original_price,
+            highlights: rawRest.highlights,
+            is_featured: rawRest.is_featured,
+            is_active: rawRest.is_active,
+            slug: finalSlug,
             images: finalImages,
             cover_image: finalCoverImage,
-            duration: durationString,
-            group_size: `${max_group_size} People`,
+            duration: (duration_days || duration_nights) ? `${duration_days || 0} Days / ${duration_nights || 0} Nights` : "",
+            group_size: max_group_size ? `${max_group_size} People` : "",
             inclusions: includes,
         })
         .eq("id", id)
@@ -208,10 +229,7 @@ export async function updateTour(id: string, prevState: any, formData: FormData)
         return { message: `Database Error: ${error.message}` }
     }
 
-    revalidatePath("/tours")
-    revalidatePath("/admin/tours")
-    revalidatePath(`/tours/${validatedFields.data.slug}`)
-    revalidatePath(`/admin/tours/${id}/edit`)
+    revalidatePath("/", "layout")
     redirect("/admin/tours")
 }
 
@@ -235,6 +253,5 @@ export async function deleteTour(id: string) {
         throw new Error("Failed to delete tour")
     }
 
-    revalidatePath("/tours")
-    revalidatePath("/admin/tours")
+    revalidatePath("/", "layout")
 }

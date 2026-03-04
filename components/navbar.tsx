@@ -26,22 +26,22 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 bg-card/95 backdrop-blur-md border-b border-border">
-      <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 lg:px-8">
+      <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-2 lg:px-8">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-3">
+        <Link href="/" className="flex items-center gap-2">
           <Image
             src="/images/logo.jpeg"
             alt="MUS!C Travels and Holidays logo"
-            width={72}
-            height={72}
+            width={48}
+            height={48}
             className="object-contain"
             priority
           />
           <div className="flex flex-col">
-            <span className="font-heading text-lg font-bold leading-tight text-foreground">
+            <span className="font-heading text-base font-bold leading-tight text-foreground">
               MUS!C
             </span>
-            <span className="text-xs text-muted-foreground leading-tight">
+            <span className="text-[10px] text-muted-foreground leading-tight">
               Travels & Holidays
             </span>
           </div>

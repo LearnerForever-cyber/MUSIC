@@ -45,7 +45,6 @@ export function TourForm({ initialData, action, submitLabel = "Save Tour" }: Tou
                                 name="title"
                                 defaultValue={initialData?.title}
                                 placeholder="e.g. Magical Bali Retreat"
-                                required
                             />
                             {state.errors?.title && <p className="text-destructive text-sm">{state.errors.title}</p>}
                         </div>
@@ -56,7 +55,6 @@ export function TourForm({ initialData, action, submitLabel = "Save Tour" }: Tou
                                 name="slug"
                                 defaultValue={initialData?.slug}
                                 placeholder="e.g. magical-bali-retreat"
-                                required
                             />
                             {state.errors?.slug && <p className="text-destructive text-sm">{state.errors.slug}</p>}
                         </div>
@@ -69,7 +67,6 @@ export function TourForm({ initialData, action, submitLabel = "Save Tour" }: Tou
                             name="short_description"
                             defaultValue={initialData?.short_description}
                             placeholder="Brief summary for listing cards..."
-                            required
                         />
                         {state.errors?.short_description && <p className="text-destructive text-sm">{state.errors.short_description}</p>}
                     </div>
@@ -82,7 +79,6 @@ export function TourForm({ initialData, action, submitLabel = "Save Tour" }: Tou
                             defaultValue={initialData?.description}
                             placeholder="Detailed tour description..."
                             className="min-h-[150px]"
-                            required
                         />
                         {state.errors?.description && <p className="text-destructive text-sm">{state.errors.description}</p>}
                     </div>
@@ -102,13 +98,12 @@ export function TourForm({ initialData, action, submitLabel = "Save Tour" }: Tou
                                 name="destination"
                                 defaultValue={initialData?.destination}
                                 placeholder="e.g. Bali, Indonesia"
-                                required
                             />
                             {state.errors?.destination && <p className="text-destructive text-sm">{state.errors.destination}</p>}
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="category">Category</Label>
-                            <Select name="category" defaultValue={initialData?.category} required>
+                            <Select name="category" defaultValue={initialData?.category}>
                                 <SelectTrigger>
                                     <SelectValue placeholder="Select category" />
                                 </SelectTrigger>
@@ -130,12 +125,11 @@ export function TourForm({ initialData, action, submitLabel = "Save Tour" }: Tou
                                 type="number"
                                 min="1"
                                 defaultValue={
-                                    initialData?.group_size
-                                        ? parseInt(initialData.group_size.split('-').pop() || "1")
+                                    initialData?.group_size && initialData.group_size.includes(' ')
+                                        ? parseInt(initialData.group_size.split(' ')[0])
                                         : undefined
                                 }
                                 placeholder="e.g. 15"
-                                required
                             />
                             {state.errors?.max_group_size && <p className="text-destructive text-sm">{state.errors.max_group_size}</p>}
                         </div>
@@ -143,21 +137,20 @@ export function TourForm({ initialData, action, submitLabel = "Save Tour" }: Tou
 
                     <div className="grid gap-4 md:grid-cols-2">
                         <div className="space-y-2">
-                            <Label htmlFor="price">Price ($)</Label>
+                            <Label htmlFor="price">Price (₹)</Label>
                             <Input
                                 id="price"
                                 name="price"
                                 type="number"
                                 min="0"
                                 step="0.01"
-                                defaultValue={initialData?.price}
+                                defaultValue={initialData?.price ?? ""}
                                 placeholder="e.g. 1299"
-                                required
                             />
                             {state.errors?.price && <p className="text-destructive text-sm">{state.errors.price}</p>}
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="original_price">Original Price ($) (Optional)</Label>
+                            <Label htmlFor="original_price">Original Price (₹) (Optional)</Label>
                             <Input
                                 id="original_price"
                                 name="original_price"
@@ -179,11 +172,10 @@ export function TourForm({ initialData, action, submitLabel = "Save Tour" }: Tou
                                 type="number"
                                 min="1"
                                 defaultValue={
-                                    initialData?.duration
+                                    initialData?.duration && initialData.duration.startsWith(' ') === false
                                         ? parseInt(initialData.duration.split(' ')[0])
                                         : undefined
                                 }
-                                required
                             />
                             {state.errors?.duration_days && <p className="text-destructive text-sm">{state.errors.duration_days}</p>}
                         </div>
@@ -195,11 +187,10 @@ export function TourForm({ initialData, action, submitLabel = "Save Tour" }: Tou
                                 type="number"
                                 min="0"
                                 defaultValue={
-                                    initialData?.duration
+                                    initialData?.duration && initialData.duration.includes('/')
                                         ? parseInt(initialData.duration.split('/')[1]?.trim().split(' ')[0] || "0")
                                         : undefined
                                 }
-                                required
                             />
                             {state.errors?.duration_nights && <p className="text-destructive text-sm">{state.errors.duration_nights}</p>}
                         </div>
@@ -220,7 +211,6 @@ export function TourForm({ initialData, action, submitLabel = "Save Tour" }: Tou
                             defaultValue={initialData?.highlights?.join("\n")}
                             placeholder="Sunset at Uluwatu&#10;Snorkeling in Gili T"
                             className="min-h-[100px]"
-                            required
                         />
                     </div>
                     <div className="space-y-2">
@@ -231,7 +221,6 @@ export function TourForm({ initialData, action, submitLabel = "Save Tour" }: Tou
                             defaultValue={initialData?.inclusions?.join("\n")}
                             placeholder="Accommodation&#10;Breakfast&#10;Transfers"
                             className="min-h-[100px]"
-                            required
                         />
                     </div>
                     <div className="space-y-4">

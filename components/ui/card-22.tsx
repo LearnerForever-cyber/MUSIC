@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Star, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 
 const MotionImage = motion(Image);
 
@@ -21,7 +21,7 @@ export interface PlaceCardProps {
     hostType: string;
     isTopRated?: boolean;
     description: string;
-    pricePerNight: number;
+    pricePerNight?: number | null;
     className?: string;
 }
 
@@ -205,23 +205,33 @@ export const PlaceCard = ({
                     {isTopRated && <Badge variant="outline" className="shrink-0">Top rated</Badge>}
                 </motion.div>
 
-                <motion.div variants={itemVariants} className="text-sm text-muted-foreground">
-                    <span>{dateRange}</span> &bull; <span>{hostType}</span>
-                </motion.div>
+                {(dateRange || hostType) && (
+                    <motion.div variants={itemVariants} className="text-sm text-muted-foreground">
+                        {dateRange && <span>{dateRange}</span>}
+                        {dateRange && hostType && <span> &bull; </span>}
+                        {hostType && <span>{hostType}</span>}
+                    </motion.div>
+                )}
 
-                <motion.p variants={itemVariants} className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
-                    {description}
-                </motion.p>
+                {description && (
+                    <motion.p variants={itemVariants} className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
+                        {description}
+                    </motion.p>
+                )}
 
                 <motion.div variants={itemVariants} className="flex justify-between items-center pt-2 mt-auto">
-                    <p className="font-semibold text-lg">
-                        ${pricePerNight}{' '}
-                        <span className="text-sm font-normal text-muted-foreground">/ night</span>
-                    </p>
-                    <Button variant="primary" size="sm" className="group">
-                        Book Now
+                    {(pricePerNight !== null && pricePerNight !== undefined && pricePerNight !== 0) ? (
+                        <p className="font-semibold text-lg">
+                            ₹{pricePerNight.toLocaleString()}{' '}
+                            <span className="text-sm font-normal text-muted-foreground">/ person</span>
+                        </p>
+                    ) : (
+                        <div />
+                    )}
+                    <div className={cn(buttonVariants({ variant: "primary", size: "sm" }), "group")}>
+                        Enquiry
                         <ArrowRight className="h-4 w-4 ml-2 transition-transform group-hover:translate-x-1" />
-                    </Button>
+                    </div>
                 </motion.div>
             </motion.div>
         </motion.div>
